@@ -39,7 +39,7 @@ export default async function EditAssignmentPage({
       <header className="border-b border-slate-200 bg-white dark:border-slate-800">
         <div className="mx-auto flex max-w-6xl items-center justify-between px-4 py-4">
           <Link
-            href="/dashboard"
+            href="/"
             className="text-xl font-bold tracking-tight text-slate-900 dark:text-white"
           >
             RubricRunner

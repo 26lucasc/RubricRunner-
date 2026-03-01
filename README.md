@@ -44,6 +44,7 @@ Required variables:
 1. Create a project at [supabase.com](https://supabase.com)
 2. In the SQL Editor, run the contents of `supabase/migrations/001_initial.sql`
 3. If you previously ran an older version of 001 that included usage tracking, run `002_remove_usage.sql` to remove it
+4. Run `003_add_pdf_columns.sql` to add PDF support (storage bucket + columns)
 
 ### 4. Run the app
 

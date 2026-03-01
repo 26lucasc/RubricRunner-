@@ -11,10 +11,10 @@ export default function Home() {
           >
             RubricRunner
           </Link>
-          <nav className="flex gap-4">
+          <nav className="flex items-center gap-4">
             <Link
               href="/login"
-              className="text-sm font-medium text-slate-600 hover:text-slate-900 dark:text-slate-400 dark:hover:text-white"
+              className="inline-flex items-center rounded-lg px-4 py-2 text-sm font-medium text-slate-600 hover:text-slate-900 dark:text-slate-400 dark:hover:text-white"
             >
               Sign in
             </Link>
