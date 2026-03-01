@@ -3,14 +3,13 @@ import type { ChecklistItem, ExtractedRubric, GeneratedOutput } from "./types";
 import { extractRubric } from "./extractor";
 import { generatePlan } from "./plan-generator";
 import { scanRisks } from "./risk-scanner";
-import { extractTextFromPdfViaLlm } from "./pdf-extractor";
 
 export async function generateForAssignment(assignmentId: string): Promise<GeneratedOutput> {
   const supabase = await createClient();
 
   const { data: assignment, error: assignError } = await supabase
     .from("assignments")
-    .select("prompt_text, rubric_text, prompt_pdf_path, rubric_pdf_path, due_at")
+    .select("prompt_text, rubric_text, due_at")
     .eq("id", assignmentId)
     .single();
 
@@ -18,46 +17,11 @@ export async function generateForAssignment(assignmentId: string): Promise<Gener
     throw new Error("Assignment not found");
   }
 
-  let promptText = assignment.prompt_text ?? "";
-  let rubricText = assignment.rubric_text ?? "";
-
-  if (assignment.prompt_pdf_path) {
-    const { data: pdfData, error: pdfError } = await supabase.storage
-      .from("assignment-pdfs")
-      .download(assignment.prompt_pdf_path);
-    if (pdfError || !pdfData) {
-      throw new Error("Could not load prompt PDF");
-    }
-    const buffer = Buffer.from(await pdfData.arrayBuffer());
-    const base64 = buffer.toString("base64");
-    promptText = await extractTextFromPdfViaLlm(base64, "prompt");
-  }
-
-  if (assignment.rubric_pdf_path) {
-    const { data: pdfData, error: pdfError } = await supabase.storage
-      .from("assignment-pdfs")
-      .download(assignment.rubric_pdf_path);
-    if (pdfError || !pdfData) {
-      throw new Error("Could not load rubric PDF");
-    }
-    const buffer = Buffer.from(await pdfData.arrayBuffer());
-    const base64 = buffer.toString("base64");
-    rubricText = await extractTextFromPdfViaLlm(base64, "rubric");
-  }
+  const promptText = assignment.prompt_text ?? "";
+  const rubricText = assignment.rubric_text ?? "";
 
   if (!promptText || !rubricText) {
-    throw new Error("Assignment must have prompt and rubric (text or PDF)");
-  }
-
-  // Save extracted text back to assignment for display/edit
-  if (assignment.prompt_pdf_path || assignment.rubric_pdf_path) {
-    await supabase
-      .from("assignments")
-      .update({
-        prompt_text: promptText,
-        rubric_text: rubricText,
-      })
-      .eq("id", assignmentId);
+    throw new Error("Assignment must have prompt and rubric");
   }
 
   const rubric = await extractRubric(rubricText);

@@ -89,8 +89,6 @@ export function AssignmentForm({
         title: title.trim(),
         prompt_text: promptText.trim() || null,
         rubric_text: rubricText.trim() || null,
-        prompt_pdf_path: promptPdfPath || null,
-        rubric_pdf_path: rubricPdfPath || null,
         due_at: new Date(dueAt).toISOString(),
       })
       .select("id")
@@ -124,29 +122,32 @@ export function AssignmentForm({
     setError(null);
     setPdfLoading(target);
     try {
-      const { data: { user } } = await supabase.auth.getUser();
-      if (!user) {
-        setError("You must be signed in to upload.");
-        return;
+      const formData = new FormData();
+      formData.append("file", file);
+      formData.append("type", target);
+
+      const res = await fetch("/api/pdf/extract", {
+        method: "POST",
+        body: formData,
+      });
+
+      const data = await res.json().catch(() => ({}));
+
+      if (!res.ok) {
+        throw new Error(data.error ?? "Failed to extract text from PDF");
       }
-      const ext = file.name.endsWith(".pdf") ? "" : ".pdf";
-      const path = `${user.id}/${target}-${crypto.randomUUID()}${ext}`;
-      const { error: uploadError } = await supabase.storage
-        .from("assignment-pdfs")
-        .upload(path, file, { contentType: "application/pdf", upsert: true });
-      if (uploadError) {
-        throw new Error(uploadError.message);
-      }
+
+      const extractedText = data.text ?? "";
       if (target === "prompt") {
-        setPromptPdfPath(path);
-        setPromptText("");
+        setPromptPdfPath(file.name);
+        setPromptText(extractedText);
       } else {
-        setRubricPdfPath(path);
-        setRubricText("");
+        setRubricPdfPath(file.name);
+        setRubricText(extractedText);
       }
     } catch (err) {
       setError(
-        err instanceof Error ? err.message : "Failed to upload PDF."
+        err instanceof Error ? err.message : "Failed to extract text from PDF."
       );
     } finally {
       setPdfLoading(null);
@@ -154,8 +155,13 @@ export function AssignmentForm({
   }
 
   function clearPdf(target: "prompt" | "rubric") {
-    if (target === "prompt") setPromptPdfPath(null);
-    else setRubricPdfPath(null);
+    if (target === "prompt") {
+      setPromptPdfPath(null);
+      setPromptText("");
+    } else {
+      setRubricPdfPath(null);
+      setRubricText("");
+    }
   }
 
   return (
@@ -212,14 +218,14 @@ export function AssignmentForm({
               onClick={() => promptPdfRef.current?.click()}
               disabled={pdfLoading !== null}
             >
-              {pdfLoading === "prompt" ? "Uploading..." : "Upload PDF"}
+              {pdfLoading === "prompt" ? "Uploading and extracting..." : "Upload PDF"}
             </Button>
           </div>
           )}
         </div>
         {promptPdfPath && !isEdit && (
           <p className="mt-1 text-sm text-green-600 dark:text-green-400">
-            PDF uploaded. The LLM will read it directly.{" "}
+            PDF uploaded and text extracted.{" "}
             <button
               type="button"
               onClick={() => clearPdf("prompt")}
@@ -234,9 +240,8 @@ export function AssignmentForm({
           value={promptText}
           onChange={(e) => setPromptText(e.target.value)}
           required={isEdit}
-          disabled={!!promptPdfPath && !isEdit}
           rows={6}
-          placeholder="Paste the assignment prompt or upload a PDF (LLM will read the PDF directly)..."
+          placeholder="Paste the assignment prompt or upload a PDF to extract text..."
           className="mt-1 block w-full rounded-lg border border-slate-300 px-3 py-2 text-slate-900 placeholder-slate-400 focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500 disabled:opacity-60 dark:border-slate-600 dark:bg-slate-800 dark:text-white"
         />
       </div>
@@ -269,14 +274,14 @@ export function AssignmentForm({
               onClick={() => rubricPdfRef.current?.click()}
               disabled={pdfLoading !== null}
             >
-              {pdfLoading === "rubric" ? "Uploading..." : "Upload PDF"}
+              {pdfLoading === "rubric" ? "Uploading and extracting..." : "Upload PDF"}
             </Button>
           </div>
           )}
         </div>
         {rubricPdfPath && !isEdit && (
           <p className="mt-1 text-sm text-green-600 dark:text-green-400">
-            PDF uploaded. The LLM will read it directly.{" "}
+            PDF uploaded and text extracted.{" "}
             <button
               type="button"
               onClick={() => clearPdf("rubric")}
@@ -291,9 +296,8 @@ export function AssignmentForm({
           value={rubricText}
           onChange={(e) => setRubricText(e.target.value)}
           required={isEdit}
-          disabled={!!rubricPdfPath && !isEdit}
           rows={8}
-          placeholder="Paste the rubric or upload a PDF (LLM will read the PDF directly). Include categories, point values, and requirements..."
+          placeholder="Paste the rubric or upload a PDF to extract text. Include categories, point values, and requirements..."
           className="mt-1 block w-full rounded-lg border border-slate-300 px-3 py-2 text-slate-900 placeholder-slate-400 focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500 disabled:opacity-60 dark:border-slate-600 dark:bg-slate-800 dark:text-white"
         />
       </div>
