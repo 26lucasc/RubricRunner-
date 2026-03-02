@@ -1,6 +1,8 @@
 import Link from "next/link";
 import { createClient } from "@/lib/supabase/server";
 import { redirect, notFound } from "next/navigation";
+import { AppHeader } from "@/components/AppHeader";
+import { FormattedDueDate } from "@/components/FormattedDueDate";
 import { AssignmentResults } from "@/components/AssignmentResults";
 import { PlanDisplay } from "@/components/PlanDisplay";
 import { OutlineDisplay } from "@/components/OutlineDisplay";
@@ -44,15 +46,14 @@ export default async function AssignmentPage({
 
   return (
     <div className="min-h-screen bg-slate-50 dark:bg-slate-950">
-      <header className="border-b border-slate-200 bg-white dark:border-slate-800">
-        <div className="mx-auto flex max-w-6xl items-center justify-between px-4 py-4">
-          <Link
-            href="/"
-            className="text-xl font-bold tracking-tight text-slate-900 dark:text-white"
-          >
-            RubricRunner
-          </Link>
-          <div className="flex items-center gap-4">
+      <AppHeader />
+
+      <main className="mx-auto max-w-4xl px-4 py-8">
+        <div className="flex flex-wrap items-center justify-between gap-4">
+          <h1 className="text-2xl font-bold text-slate-900 dark:text-white">
+            {assignment.title}
+          </h1>
+          <div className="flex items-center gap-3">
             <Link
               href={`/assignments/${id}/edit`}
               className="text-sm font-medium text-slate-600 hover:text-slate-900 dark:text-slate-400 dark:hover:text-white"
@@ -63,37 +64,17 @@ export default async function AssignmentPage({
               assignmentId={id}
               assignmentTitle={assignment.title}
             />
-            <Link
-              href="/dashboard"
-              className="text-sm font-medium text-slate-600 hover:text-slate-900 dark:text-slate-400 dark:hover:text-white"
-            >
-              Dashboard
-            </Link>
           </div>
         </div>
-      </header>
-
-      <main className="mx-auto max-w-4xl px-4 py-8">
-        <h1 className="text-2xl font-bold text-slate-900 dark:text-white">
-          {assignment.title}
-        </h1>
         <div className="mt-1 flex items-center gap-4">
           <p className="text-slate-600 dark:text-slate-400">
             Due{" "}
-            {new Date(assignment.due_at).toLocaleDateString("en-US", {
-              month: "short",
-              day: "numeric",
-              year: "numeric",
-            })}
+            <FormattedDueDate iso={assignment.due_at} format="short" />
           </p>
           {output && (
             <ExportButton
               title={assignment.title}
-              dueAt={new Date(assignment.due_at).toLocaleDateString("en-US", {
-                month: "short",
-                day: "numeric",
-                year: "numeric",
-              })}
+              dueAt={assignment.due_at}
               planMd={output.plan_md ?? ""}
               outlineMd={output.outline_md ?? ""}
               checklist={(output.checklist_json as { text: string; category?: string; completed: boolean }[]) ?? []}

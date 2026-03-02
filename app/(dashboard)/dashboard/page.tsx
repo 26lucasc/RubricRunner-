@@ -1,6 +1,8 @@
 import Link from "next/link";
 import { createClient } from "@/lib/supabase/server";
 import { redirect } from "next/navigation";
+import { AppHeader } from "@/components/AppHeader";
+import { FormattedDueDate } from "@/components/FormattedDueDate";
 
 export default async function DashboardPage() {
   const supabase = await createClient();
@@ -20,26 +22,7 @@ export default async function DashboardPage() {
 
   return (
     <div className="min-h-screen bg-slate-50 dark:bg-slate-950">
-      <header className="border-b border-slate-200 bg-white dark:border-slate-800 dark:bg-slate-900">
-        <div className="mx-auto flex max-w-6xl items-center justify-between px-4 py-4">
-          <Link
-            href="/"
-            className="text-xl font-bold tracking-tight text-slate-900 dark:text-white"
-          >
-            RubricRunner
-          </Link>
-          <div className="flex items-center gap-4">
-            <form action="/auth/signout" method="POST">
-              <button
-                type="submit"
-                className="text-sm font-medium text-slate-600 hover:text-slate-900 dark:text-slate-400 dark:hover:text-white"
-              >
-                Sign out
-              </button>
-            </form>
-          </div>
-        </div>
-      </header>
+      <AppHeader />
 
       <main className="mx-auto max-w-6xl px-4 py-8">
         <div className="flex items-center justify-between">
@@ -67,11 +50,7 @@ export default async function DashboardPage() {
                   </h2>
                   <p className="mt-1 text-sm text-slate-500 dark:text-slate-400">
                     Due{" "}
-                    {new Date(a.due_at).toLocaleDateString("en-US", {
-                      month: "short",
-                      day: "numeric",
-                      year: "numeric",
-                    })}
+                    <FormattedDueDate iso={a.due_at} format="date" />
                   </p>
                 </Link>
               </li>

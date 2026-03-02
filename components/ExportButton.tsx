@@ -1,9 +1,11 @@
 "use client";
 
+import { useUserTimezone } from "@/lib/hooks/useUserTimezone";
 import { buildExportMarkdown, downloadMarkdown } from "@/lib/utils/export";
 
 interface ExportButtonProps {
   title: string;
+  /** ISO 8601 string for due_at */
   dueAt: string;
   planMd: string;
   outlineMd: string;
@@ -19,10 +21,30 @@ export function ExportButton({
   checklist,
   risks,
 }: ExportButtonProps) {
+  const { timeZoneId } = useUserTimezone();
+
   function handleExport() {
+    const date = new Date(dueAt);
+    const formattedDue = timeZoneId
+      ? date.toLocaleString("en-US", {
+          month: "short",
+          day: "numeric",
+          year: "numeric",
+          hour: "numeric",
+          minute: "2-digit",
+          timeZone: timeZoneId,
+        })
+      : date.toLocaleString("en-US", {
+          month: "short",
+          day: "numeric",
+          year: "numeric",
+          hour: "numeric",
+          minute: "2-digit",
+        });
+
     const content = buildExportMarkdown(
       title,
-      dueAt,
+      formattedDue,
       planMd,
       outlineMd,
       checklist,

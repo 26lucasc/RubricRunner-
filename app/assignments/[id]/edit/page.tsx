@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { createClient } from "@/lib/supabase/server";
 import { redirect, notFound } from "next/navigation";
+import { AppHeader } from "@/components/AppHeader";
 import { AssignmentForm } from "@/components/AssignmentForm";
 
 export default async function EditAssignmentPage({
@@ -29,32 +30,18 @@ export default async function EditAssignmentPage({
     notFound();
   }
 
-  const dueAtLocal = new Date(assignment.due_at);
-  const offset = dueAtLocal.getTimezoneOffset() * 60000;
-  const localDate = new Date(dueAtLocal.getTime() - offset);
-  const initialDueAt = localDate.toISOString().slice(0, 16);
-
   return (
     <div className="min-h-screen bg-slate-50 dark:bg-slate-950">
-      <header className="border-b border-slate-200 bg-white dark:border-slate-800">
-        <div className="mx-auto flex max-w-6xl items-center justify-between px-4 py-4">
-          <Link
-            href="/"
-            className="text-xl font-bold tracking-tight text-slate-900 dark:text-white"
-          >
-            RubricRunner
-          </Link>
-          <Link
-            href={`/assignments/${id}`}
-            className="text-sm font-medium text-slate-600 hover:text-slate-900 dark:text-slate-400 dark:hover:text-white"
-          >
-            Back to assignment
-          </Link>
-        </div>
-      </header>
+      <AppHeader />
 
       <main className="mx-auto max-w-2xl px-4 py-8">
-        <h1 className="text-2xl font-bold text-slate-900 dark:text-white">
+        <Link
+          href={`/assignments/${id}`}
+          className="text-sm font-medium text-slate-600 hover:text-slate-900 dark:text-slate-400 dark:hover:text-white"
+        >
+          ← Back to assignment
+        </Link>
+        <h1 className="mt-2 text-2xl font-bold text-slate-900 dark:text-white">
           Edit assignment
         </h1>
         <p className="mt-2 text-slate-600 dark:text-slate-400">
@@ -67,7 +54,7 @@ export default async function EditAssignmentPage({
           initialTitle={assignment.title}
           initialPromptText={assignment.prompt_text}
           initialRubricText={assignment.rubric_text}
-          initialDueAt={initialDueAt}
+          initialDueAtIso={assignment.due_at}
         />
       </main>
     </div>

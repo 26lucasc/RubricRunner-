@@ -38,6 +38,7 @@ Required variables:
 - `NEXT_PUBLIC_SUPABASE_URL` – From [Supabase Dashboard](https://supabase.com/dashboard) → Project Settings → API
 - `NEXT_PUBLIC_SUPABASE_ANON_KEY` – Same location
 - `OPENAI_API_KEY` – From [OpenAI](https://platform.openai.com/api-keys)
+- `GOOGLE_MAPS_API_KEY` – For [Time Zone API](https://developers.google.com/maps/documentation/timezone) (optional; falls back to browser timezone if missing)
 
 ### 3. Create Supabase project and run migrations
 
@@ -67,7 +68,7 @@ When deploying to production (e.g. Vercel):
 1. **Supabase redirect URLs** – In Supabase Dashboard → Authentication → URL Configuration, add your production URLs to **Redirect URLs**:
    - `https://yourdomain.com`
    - `https://yourdomain.com/auth/callback` (required for password reset)
-2. **Environment variables** – Set `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_ANON_KEY`, and `OPENAI_API_KEY` in your hosting provider.
+2. **Environment variables** – Set `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_ANON_KEY`, `OPENAI_API_KEY`, and optionally `GOOGLE_MAPS_API_KEY` in your hosting provider.
 3. **Site URL** – Set **Site URL** in Supabase to your production domain (e.g. `https://yourdomain.com`).
 
 ## User Flow

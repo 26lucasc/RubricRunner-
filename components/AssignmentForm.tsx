@@ -1,16 +1,30 @@
 "use client";
 
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
 import { Button } from "@/components/ui/button";
+
+function isoToLocalDatetime(iso: string): string {
+  const d = new Date(iso);
+  if (Number.isNaN(d.getTime())) return "";
+  const y = d.getFullYear();
+  const m = String(d.getMonth() + 1).padStart(2, "0");
+  const day = String(d.getDate()).padStart(2, "0");
+  const h = String(d.getHours()).padStart(2, "0");
+  const min = String(d.getMinutes()).padStart(2, "0");
+  return `${y}-${m}-${day}T${h}:${min}`;
+}
 
 type AssignmentFormProps = {
   assignmentId?: string;
   initialTitle?: string;
   initialPromptText?: string;
   initialRubricText?: string;
+  /** For create: local datetime string. For edit: pass initialDueAtIso instead. */
   initialDueAt?: string;
+  /** For edit: raw ISO from DB; converted to user's local time in browser */
+  initialDueAtIso?: string;
 };
 
 export function AssignmentForm({
@@ -19,11 +33,20 @@ export function AssignmentForm({
   initialPromptText = "",
   initialRubricText = "",
   initialDueAt = "",
+  initialDueAtIso,
 }: AssignmentFormProps) {
   const [title, setTitle] = useState(initialTitle);
   const [promptText, setPromptText] = useState(initialPromptText);
   const [rubricText, setRubricText] = useState(initialRubricText);
-  const [dueAt, setDueAt] = useState(initialDueAt);
+  const [dueAt, setDueAt] = useState(() =>
+    initialDueAtIso ? isoToLocalDatetime(initialDueAtIso) : initialDueAt
+  );
+
+  useEffect(() => {
+    if (initialDueAtIso) {
+      setDueAt(isoToLocalDatetime(initialDueAtIso));
+    }
+  }, [initialDueAtIso]);
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
   const [promptPdfPath, setPromptPdfPath] = useState<string | null>(null);
@@ -109,7 +132,10 @@ export function AssignmentForm({
 
   const tomorrow = new Date();
   tomorrow.setDate(tomorrow.getDate() + 1);
-  const minDate = isEdit ? undefined : tomorrow.toISOString().slice(0, 16);
+  tomorrow.setHours(0, 0, 0, 0);
+  const minDate = isEdit
+    ? undefined
+    : `${tomorrow.getFullYear()}-${String(tomorrow.getMonth() + 1).padStart(2, "0")}-${String(tomorrow.getDate()).padStart(2, "0")}T00:00`;
 
   async function handlePdfUpload(
     file: File,
