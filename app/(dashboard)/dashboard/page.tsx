@@ -2,6 +2,7 @@ import Link from "next/link";
 import { createClient } from "@/lib/supabase/server";
 import { redirect } from "next/navigation";
 import { AppHeader } from "@/components/AppHeader";
+import { AssignmentCalendar } from "@/components/AssignmentCalendar";
 import { FormattedDueDate } from "@/components/FormattedDueDate";
 
 export default async function DashboardPage() {
@@ -37,8 +38,18 @@ export default async function DashboardPage() {
           </Link>
         </div>
 
+        {assignments && assignments.length > 0 && (
+          <div className="mt-8">
+            <AssignmentCalendar assignments={assignments} />
+          </div>
+        )}
+
         {assignments && assignments.length > 0 ? (
-          <ul className="mt-8 space-y-4">
+          <>
+            <h2 className="mt-10 text-lg font-semibold text-slate-900 dark:text-white">
+              All assignments
+            </h2>
+            <ul className="mt-4 space-y-4">
             {assignments.map((a) => (
               <li key={a.id}>
                 <Link
@@ -56,6 +67,7 @@ export default async function DashboardPage() {
               </li>
             ))}
           </ul>
+          </>
         ) : (
           <div className="mt-12 rounded-lg border border-dashed border-slate-300 bg-white p-12 text-center dark:border-slate-700 dark:bg-slate-900">
             <p className="text-slate-600 dark:text-slate-400">
