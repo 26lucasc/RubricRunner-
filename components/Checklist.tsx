@@ -55,12 +55,12 @@ export function Checklist({ items }: ChecklistProps) {
                   <button
                     type="button"
                     onClick={() => toggle(item.id)}
-                    className="mt-0.5 shrink-0 rounded border border-slate-300 p-0.5 focus:outline-none focus:ring-2 focus:ring-indigo-500 dark:border-slate-600"
+                    className="mt-0.5 shrink-0 rounded border border-input p-0.5 focus:outline-none focus:ring-2 focus:ring-primary dark:border-slate-600"
                     aria-label={item.completed ? "Mark incomplete" : "Mark complete"}
                   >
                     {item.completed ? (
                       <svg
-                        className="h-4 w-4 text-indigo-600"
+                        className="h-4 w-4 text-primary"
                         fill="currentColor"
                         viewBox="0 0 20 20"
                       >

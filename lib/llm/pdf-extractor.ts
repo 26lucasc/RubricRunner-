@@ -1,5 +1,12 @@
 import OpenAI from "openai";
 
+/** PDF magic bytes: %PDF */
+const PDF_MAGIC = Buffer.from([0x25, 0x50, 0x44, 0x46]);
+
+function isValidPdfBuffer(buffer: Buffer): boolean {
+  return buffer.length >= 4 && buffer.subarray(0, 4).equals(PDF_MAGIC);
+}
+
 const REFUSAL_PHRASES = [
   "i'm unable to help",
   "i cannot help",
@@ -75,14 +82,39 @@ export async function extractTextFromPdfViaLlm(
   pdfBase64: string,
   extractionType: "prompt" | "rubric"
 ): Promise<string> {
-  const client = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
   const pdfBuffer = Buffer.from(pdfBase64, "base64");
+
+  if (!isValidPdfBuffer(pdfBuffer)) {
+    throw new Error(
+      "This file doesn't appear to be a valid PDF. When downloading from SharePoint, use the Download button (not Open in browser) to save the actual PDF file. If the file is correct, try pasting the content manually."
+    );
+  }
+
+  const client = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
 
   const instruction =
     extractionType === "prompt"
       ? `You are a helpful assistant extracting text from a PDF. The PDF may be text-based, scanned, image-based, or a screenshot. Use your full vision capability to read whatever you can see. Extract the complete assignment prompt. Return ONLY the extracted text, preserving structure. Do not add commentary.`
       : `You are a helpful assistant extracting text from a PDF. The PDF may be text-based, scanned, image-based, or a screenshot. Use your full vision capability to read whatever you can see. Extract the complete rubric including categories, points, and requirements. Return ONLY the extracted text, preserving structure. Do not add commentary.`;
 
+  // 1. Try direct text extraction (works for standard text-based PDFs, including many from SharePoint)
+  try {
+    const { PDFParse } = await import("pdf-parse");
+    const parser = new PDFParse({ data: pdfBuffer });
+    const result = await parser.getText();
+    await parser.destroy();
+    const text = result?.text?.trim();
+    if (text && text.length >= 30) {
+      return text;
+    }
+  } catch (parseErr) {
+    // pdf-parse failed (scanned PDF, protected, or unsupported structure) — fall through to LLM
+    if (process.env.NODE_ENV === "development") {
+      console.warn("pdf-parse extraction failed, trying LLM:", parseErr);
+    }
+  }
+
+  // 2. Try OpenAI Responses API (direct PDF input)
   try {
     const response = await client.responses.create({
       model: "gpt-4o",
@@ -105,16 +137,19 @@ export async function extractTextFromPdfViaLlm(
     if (text && !isRefusal(text)) {
       return text;
     }
-  } catch {
-    // Responses API failed
+  } catch (apiErr) {
+    if (process.env.NODE_ENV === "development") {
+      console.warn("OpenAI Responses API failed:", apiErr);
+    }
   }
 
+  // 3. Fallback: render pages to images and use vision
   try {
     return await extractViaVisionFallback(pdfBuffer, extractionType);
   } catch (fallbackErr) {
-    console.error("PDF vision fallback failed:", fallbackErr);
+    console.error("PDF extraction failed (all methods):", fallbackErr);
     throw new Error(
-      "Could not extract text from this PDF. Try pasting the content manually."
+      "Could not extract text from this PDF. If it's from SharePoint, try: (1) Download the file (not Open in browser), (2) Remove any password or protection, (3) Or paste the content manually."
     );
   }
 }

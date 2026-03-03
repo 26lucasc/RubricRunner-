@@ -70,7 +70,7 @@ function AssignmentLink({
     return (
       <Link
         href={`/assignments/${assignment.id}`}
-        className="group flex flex-col gap-0.5 rounded-md bg-slate-100 px-1.5 py-1 text-left transition-colors hover:bg-indigo-100 dark:bg-slate-800 dark:hover:bg-indigo-950/50"
+        className="group flex flex-col gap-0.5 rounded-md bg-slate-100 px-1.5 py-1 text-left transition-colors hover:bg-primary/10 dark:bg-slate-800 dark:hover:bg-primary/20"
         title={assignment.title}
       >
         <span className="line-clamp-2 text-[11px] font-medium leading-tight text-slate-800 dark:text-slate-200">
@@ -85,12 +85,12 @@ function AssignmentLink({
   return (
     <Link
       href={`/assignments/${assignment.id}`}
-      className="block rounded-md border border-slate-100 px-2.5 py-1.5 text-left transition-colors hover:border-indigo-200 hover:bg-indigo-50/50 dark:border-slate-800 dark:hover:border-indigo-900 dark:hover:bg-indigo-950/20"
+      className="block rounded-md border border-slate-100 px-2.5 py-1.5 text-left transition-colors hover:border-primary/40 hover:bg-primary/5 dark:border-slate-800 dark:hover:border-primary/30 dark:hover:bg-primary/10"
     >
       <span className="block truncate text-sm font-medium text-slate-900 dark:text-white">
         {assignment.title}
       </span>
-      <span className="block text-xs text-indigo-600 dark:text-indigo-400">
+      <span className="block text-xs text-primary">
         {formatTime(assignment.due_at, timeZoneId)}
       </span>
     </Link>
@@ -144,7 +144,7 @@ export function AssignmentCalendar({ assignments }: AssignmentCalendarProps) {
   const modifiersClassNames = useMemo(
     () => ({
       hasAssignment:
-        "ring-2 ring-indigo-500 ring-offset-2 ring-offset-background",
+        "ring-2 ring-primary ring-offset-2 ring-offset-background",
     }),
     []
   );
@@ -277,7 +277,7 @@ export function AssignmentCalendar({ assignments }: AssignmentCalendarProps) {
                   onClick={() => setSelected(day)}
                   className={`flex min-w-[4.5rem] flex-1 flex-col border-l border-slate-100 py-1.5 px-1.5 text-left transition-colors first:min-w-[4.5rem] first:border-l-0 dark:border-slate-800 ${
                     isSelected
-                      ? "bg-indigo-50/80 ring-1 ring-inset ring-indigo-400/60 dark:bg-indigo-950/40 dark:ring-indigo-500/50"
+                      ? "bg-primary/10 ring-1 ring-inset ring-primary/40 dark:bg-primary/20 dark:ring-primary/50"
                       : isToday
                         ? "bg-slate-50/80 dark:bg-slate-800/30"
                         : "hover:bg-slate-50/50 dark:hover:bg-slate-800/20"
@@ -362,12 +362,12 @@ export function AssignmentCalendar({ assignments }: AssignmentCalendarProps) {
               <li key={a.id}>
                 <Link
                   href={`/assignments/${a.id}`}
-                  className="block rounded-md border border-slate-100 px-2.5 py-2 transition-colors hover:border-indigo-200 hover:bg-indigo-50/50 dark:border-slate-800 dark:hover:border-indigo-900 dark:hover:bg-indigo-950/20"
+                  className="block rounded-md border border-slate-100 px-2.5 py-2 transition-colors hover:border-primary/40 hover:bg-primary/5 dark:border-slate-800 dark:hover:border-primary/30 dark:hover:bg-primary/10"
                 >
                   <span className="block truncate text-sm font-medium text-slate-900 dark:text-white">
                     {a.title}
                   </span>
-                  <span className="mt-0.5 block text-xs text-indigo-600 dark:text-indigo-400">
+                  <span className="mt-0.5 block text-xs text-primary">
                     Due at {formatTime(a.due_at, timeZoneId)}
                   </span>
                 </Link>

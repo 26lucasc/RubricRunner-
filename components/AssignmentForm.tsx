@@ -193,7 +193,7 @@ export function AssignmentForm({
   return (
     <form onSubmit={handleSubmit} className="mt-8 space-y-6">
       {error && (
-        <div className="rounded-lg bg-red-50 p-3 text-sm text-red-700 dark:bg-red-900/20 dark:text-red-400">
+        <div className="rounded-lg bg-destructive-muted p-3 text-sm text-destructive">
           {error}
         </div>
       )}
@@ -201,7 +201,7 @@ export function AssignmentForm({
       <div>
         <label
           htmlFor="title"
-          className="block text-sm font-medium text-slate-700 dark:text-slate-300"
+          className="block text-sm font-medium text-foreground"
         >
           Assignment title
         </label>
@@ -212,7 +212,7 @@ export function AssignmentForm({
           onChange={(e) => setTitle(e.target.value)}
           required
           placeholder="e.g., AP Lang Rhetorical Analysis Essay"
-          className="mt-1 block w-full rounded-lg border border-slate-300 px-3 py-2 text-slate-900 placeholder-slate-400 focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500 dark:border-slate-600 dark:bg-slate-800 dark:text-white"
+          className="mt-1 block w-full rounded-lg border border-input px-3 py-2 bg-background text-foreground placeholder-muted-foreground focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary "
         />
       </div>
 
@@ -220,7 +220,7 @@ export function AssignmentForm({
         <div className="flex items-center justify-between">
           <label
             htmlFor="prompt"
-            className="block text-sm font-medium text-slate-700 dark:text-slate-300"
+            className="block text-sm font-medium text-foreground"
           >
             Assignment prompt
           </label>
@@ -255,7 +255,7 @@ export function AssignmentForm({
             <button
               type="button"
               onClick={() => clearPdf("prompt")}
-              className="text-indigo-600 hover:underline dark:text-indigo-400"
+              className="text-primary hover:underline"
             >
               Remove
             </button>
@@ -268,7 +268,7 @@ export function AssignmentForm({
           required={isEdit}
           rows={6}
           placeholder="Paste the assignment prompt or upload a PDF to extract text..."
-          className="mt-1 block w-full rounded-lg border border-slate-300 px-3 py-2 text-slate-900 placeholder-slate-400 focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500 disabled:opacity-60 dark:border-slate-600 dark:bg-slate-800 dark:text-white"
+          className="mt-1 block w-full rounded-lg border border-input px-3 py-2 bg-background text-foreground placeholder-muted-foreground focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary disabled:opacity-60 "
         />
       </div>
 
@@ -276,7 +276,7 @@ export function AssignmentForm({
         <div className="flex items-center justify-between">
           <label
             htmlFor="rubric"
-            className="block text-sm font-medium text-slate-700 dark:text-slate-300"
+            className="block text-sm font-medium text-foreground"
           >
             Rubric
           </label>
@@ -311,7 +311,7 @@ export function AssignmentForm({
             <button
               type="button"
               onClick={() => clearPdf("rubric")}
-              className="text-indigo-600 hover:underline dark:text-indigo-400"
+              className="text-primary hover:underline"
             >
               Remove
             </button>
@@ -324,14 +324,14 @@ export function AssignmentForm({
           required={isEdit}
           rows={8}
           placeholder="Paste the rubric or upload a PDF to extract text. Include categories, point values, and requirements..."
-          className="mt-1 block w-full rounded-lg border border-slate-300 px-3 py-2 text-slate-900 placeholder-slate-400 focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500 disabled:opacity-60 dark:border-slate-600 dark:bg-slate-800 dark:text-white"
+          className="mt-1 block w-full rounded-lg border border-input px-3 py-2 bg-background text-foreground placeholder-muted-foreground focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary disabled:opacity-60 "
         />
       </div>
 
       <div>
         <label
           htmlFor="dueAt"
-          className="block text-sm font-medium text-slate-700 dark:text-slate-300"
+          className="block text-sm font-medium text-foreground"
         >
           Due date
         </label>
@@ -342,14 +342,14 @@ export function AssignmentForm({
           onChange={(e) => setDueAt(e.target.value)}
           required
           min={minDate ?? undefined}
-          className="mt-1 block w-full rounded-lg border border-slate-300 px-3 py-2 text-slate-900 focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500 dark:border-slate-600 dark:bg-slate-800 dark:text-white"
+          className="mt-1 block w-full rounded-lg border border-input px-3 py-2 bg-background text-foreground focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary "
         />
       </div>
 
       <button
         type="submit"
         disabled={loading}
-        className="w-full rounded-lg bg-indigo-600 px-4 py-3 font-medium text-white transition-colors hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 disabled:opacity-50"
+        className="w-full rounded-lg bg-primary px-4 py-3 font-medium text-primary-foreground transition-colors hover:bg-primary/90 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 disabled:opacity-50"
       >
         {loading
           ? isEdit

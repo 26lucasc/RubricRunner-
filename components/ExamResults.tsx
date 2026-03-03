@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 
-export function AssignmentResults({ assignmentId }: { assignmentId: string }) {
+export function ExamResults({ examId }: { examId: string }) {
   const [status, setStatus] = useState<"idle" | "generating" | "error">("idle");
   const [error, setError] = useState<string | null>(null);
   const router = useRouter();
@@ -16,9 +16,7 @@ export function AssignmentResults({ assignmentId }: { assignmentId: string }) {
       setError(null);
 
       try {
-        const res = await fetch(`/api/assignments/${assignmentId}/generate`, {
-          method: "POST",
-        });
+        const res = await fetch(`/api/exams/${examId}/generate`, { method: "POST" });
 
         if (cancelled) return;
 
@@ -39,20 +37,18 @@ export function AssignmentResults({ assignmentId }: { assignmentId: string }) {
     }
 
     generate();
-    return () => {
-      cancelled = true;
-    };
-  }, [assignmentId, router]);
+    return () => { cancelled = true; };
+  }, [examId, router]);
 
   if (status === "generating") {
     return (
       <div className="mt-12 rounded-lg border border-border bg-card p-12 text-center dark:border-slate-700 dark:bg-slate-900">
         <div className="mx-auto h-10 w-10 animate-spin rounded-full border-2 border-primary border-t-transparent" />
-        <p className="mt-4 text-muted-foreground">
-          Generating your battle plan, outline, and risk scan...
+        <p className="mt-4 text-slate-600 dark:text-slate-400">
+          Generating your exam study plan...
         </p>
-        <p className="mt-2 text-sm text-slate-500 dark:text-slate-500">
-          This usually takes 30–60 seconds.
+        <p className="mt-2 text-sm text-slate-500">
+          Analyzing materials, prioritizing topics, and designing sessions.
         </p>
       </div>
     );
@@ -61,9 +57,7 @@ export function AssignmentResults({ assignmentId }: { assignmentId: string }) {
   if (status === "error") {
     return (
       <div className="mt-12 rounded-lg border border-red-200 bg-red-50 p-6 dark:border-red-800 dark:bg-red-900/20">
-        <p className="font-medium text-red-800 dark:text-red-400">
-          Generation failed
-        </p>
+        <p className="font-medium text-red-800 dark:text-red-400">Generation failed</p>
         <p className="mt-2 text-sm text-red-700 dark:text-red-300">{error}</p>
         <button
           onClick={() => router.refresh()}

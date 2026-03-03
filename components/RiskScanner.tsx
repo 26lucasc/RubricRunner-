@@ -10,20 +10,20 @@ interface RiskScannerProps {
 }
 
 const severityColors = {
-  high: "bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-400",
-  medium: "bg-amber-100 text-amber-800 dark:bg-amber-900/30 dark:text-amber-400",
-  low: "bg-slate-100 text-slate-700 dark:bg-slate-700 dark:text-slate-300",
+  high: "bg-destructive-muted text-destructive",
+  medium: "bg-warning-muted text-warning",
+  low: "bg-muted text-muted-foreground",
 };
 
 export function RiskScanner({ risks }: RiskScannerProps) {
   if (risks.length === 0) {
     return (
       <section>
-        <h2 className="text-lg font-semibold text-slate-900 dark:text-white">
+        <h2 className="text-lg font-semibold text-foreground">
           Risk scanner
         </h2>
-        <div className="mt-4 rounded-lg border border-slate-200 bg-white p-6 dark:border-slate-700 dark:bg-slate-900">
-          <p className="text-slate-600 dark:text-slate-400">
+        <div className="mt-4 rounded-lg border border-border bg-card p-6">
+          <p className="text-muted-foreground">
             No major risks identified. You&apos;re on track!
           </p>
         </div>
@@ -33,17 +33,17 @@ export function RiskScanner({ risks }: RiskScannerProps) {
 
   return (
     <section>
-      <h2 className="text-lg font-semibold text-slate-900 dark:text-white">
+      <h2 className="text-lg font-semibold text-foreground">
         Risk scanner
       </h2>
-      <p className="mt-1 text-sm text-slate-600 dark:text-slate-400">
+      <p className="mt-1 text-sm text-muted-foreground">
         Potential deduction triggers to address
       </p>
       <div className="mt-4 space-y-3">
         {risks.map((risk, i) => (
           <div
             key={i}
-            className="flex items-start gap-3 rounded-lg border border-slate-200 bg-white p-4 dark:border-slate-700 dark:bg-slate-900"
+            className="flex items-start gap-3 rounded-lg border border-border bg-card p-4"
           >
             <span
               className={`shrink-0 rounded px-2 py-0.5 text-xs font-medium ${
@@ -54,11 +54,11 @@ export function RiskScanner({ risks }: RiskScannerProps) {
               {risk.severity}
             </span>
             <div className="min-w-0 flex-1">
-              <p className="text-slate-900 dark:text-white">
+              <p className="text-foreground">
                 {risk.description}
               </p>
               {risk.suggestion && (
-                <p className="mt-1 text-sm text-slate-600 dark:text-slate-400">
+                <p className="mt-1 text-sm text-muted-foreground">
                   Suggestion: {risk.suggestion}
                 </p>
               )}

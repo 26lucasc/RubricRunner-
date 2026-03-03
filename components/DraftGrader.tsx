@@ -71,7 +71,7 @@ export function DraftGrader({ assignmentId }: DraftGraderProps) {
           onChange={(e) => setContent(e.target.value)}
           placeholder="Paste your draft here..."
           rows={10}
-          className="block w-full rounded-lg border border-slate-300 px-3 py-2 text-slate-900 placeholder-slate-400 focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500 dark:border-slate-600 dark:bg-slate-800 dark:text-white"
+          className="block w-full rounded-lg border border-input px-3 py-2 bg-background text-foreground placeholder-slate-400 focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary dark:border-slate-600 dark:bg-slate-800 dark:text-white"
           disabled={loading}
         />
         {error && (
@@ -82,7 +82,7 @@ export function DraftGrader({ assignmentId }: DraftGraderProps) {
         <button
           type="submit"
           disabled={loading || !content.trim()}
-          className="rounded-lg bg-indigo-600 px-4 py-2 font-medium text-white hover:bg-indigo-700 disabled:opacity-50"
+          className="rounded-lg bg-primary px-4 py-2 font-medium text-primary-foreground hover:bg-primary/90 disabled:opacity-50"
         >
           {loading ? "Grading..." : "Grade draft"}
         </button>

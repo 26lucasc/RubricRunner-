@@ -35,14 +35,14 @@ export function AppHeader() {
   }, []);
 
   const navLinkClass =
-    "block rounded-lg px-4 py-3 text-base font-medium text-slate-700 hover:bg-slate-100 dark:text-slate-300 dark:hover:bg-slate-800";
+    "block rounded-lg px-4 py-3 text-base font-medium text-foreground hover:bg-muted";
 
   return (
-    <header className="border-b border-slate-200 bg-white dark:border-slate-800 dark:bg-slate-900">
+    <header className="border-b border-border bg-card">
       <div className="mx-auto flex max-w-6xl items-center justify-between px-4 py-4">
         <Link
           href="/"
-          className="text-xl font-bold tracking-tight text-slate-900 dark:text-white"
+          className="text-xl font-bold tracking-tight text-foreground"
         >
           RubricRunner
         </Link>
@@ -82,7 +82,14 @@ export function AppHeader() {
                   >
                     New assignment
                   </Link>
-                  <div className="mt-4 border-t border-slate-200 dark:border-slate-700" />
+                  <Link
+                    href="/exams/new"
+                    className={navLinkClass}
+                    onClick={() => setOpen(false)}
+                  >
+                    New exam study plan
+                  </Link>
+                  <div className="mt-4 border-t border-border" />
                   <form action="/auth/signout" method="POST" className="mt-2">
                     <button
                       type="submit"
@@ -104,7 +111,7 @@ export function AppHeader() {
                   </Link>
                   <Link
                     href="/signup"
-                    className={`${navLinkClass} bg-indigo-600 text-white hover:bg-indigo-700 dark:bg-indigo-600 dark:hover:bg-indigo-700`}
+                    className={`${navLinkClass} bg-primary text-primary-foreground hover:bg-primary/90`}
                     onClick={() => setOpen(false)}
                   >
                     Get started

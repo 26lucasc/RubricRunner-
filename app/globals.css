@@ -6,6 +6,14 @@
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
+  --color-balanced: var(--balanced);
+  --color-balanced-muted: var(--balanced-muted);
+  --color-cram: var(--cram);
+  --color-cram-muted: var(--cram-muted);
+  --color-success: var(--success);
+  --color-success-muted: var(--success-muted);
+  --color-warning: var(--warning);
+  --color-warning-muted: var(--warning-muted);
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
   --color-sidebar-ring: var(--sidebar-ring);
@@ -25,6 +33,7 @@
   --color-input: var(--input);
   --color-border: var(--border);
   --color-destructive: var(--destructive);
+  --color-destructive-muted: var(--destructive-muted);
   --color-accent-foreground: var(--accent-foreground);
   --color-accent: var(--accent);
   --color-muted-foreground: var(--muted-foreground);
@@ -46,80 +55,302 @@
   --radius-4xl: calc(var(--radius) + 16px);
 }
 
+/* Light mode — Blue (#106EBE) + Mint (#0FFCBE) */
 :root {
   --radius: 0.625rem;
-  --background: oklch(1 0 0);
-  --foreground: oklch(0.145 0 0);
+  --background: oklch(0.982 0.003 247);
+  --foreground: oklch(0.2 0.01 260);
   --card: oklch(1 0 0);
-  --card-foreground: oklch(0.145 0 0);
+  --card-foreground: oklch(0.2 0.01 260);
   --popover: oklch(1 0 0);
-  --popover-foreground: oklch(0.145 0 0);
-  --primary: oklch(0.205 0 0);
-  --primary-foreground: oklch(0.985 0 0);
-  --secondary: oklch(0.97 0 0);
-  --secondary-foreground: oklch(0.205 0 0);
-  --muted: oklch(0.97 0 0);
-  --muted-foreground: oklch(0.556 0 0);
-  --accent: oklch(0.97 0 0);
-  --accent-foreground: oklch(0.205 0 0);
-  --destructive: oklch(0.577 0.245 27.325);
-  --border: oklch(0.922 0 0);
-  --input: oklch(0.922 0 0);
-  --ring: oklch(0.708 0 0);
-  --chart-1: oklch(0.646 0.222 41.116);
-  --chart-2: oklch(0.6 0.118 184.704);
-  --chart-3: oklch(0.398 0.07 227.392);
-  --chart-4: oklch(0.828 0.189 84.429);
-  --chart-5: oklch(0.769 0.188 70.08);
-  --sidebar: oklch(0.985 0 0);
-  --sidebar-foreground: oklch(0.145 0 0);
-  --sidebar-primary: oklch(0.205 0 0);
-  --sidebar-primary-foreground: oklch(0.985 0 0);
-  --sidebar-accent: oklch(0.97 0 0);
-  --sidebar-accent-foreground: oklch(0.205 0 0);
-  --sidebar-border: oklch(0.922 0 0);
-  --sidebar-ring: oklch(0.708 0 0);
+  --popover-foreground: oklch(0.2 0.01 260);
+  --primary: #106EBE;
+  --primary-foreground: #ffffff;
+  --secondary: oklch(0.94 0.03 195);
+  --secondary-foreground: #106EBE;
+  --muted: oklch(0.965 0.004 247);
+  --muted-foreground: oklch(0.5 0.01 260);
+  --accent: #0FFCBE;
+  --accent-foreground: #0a3d2e;
+  --destructive: oklch(0.55 0.18 25);
+  --destructive-muted: oklch(0.96 0.03 25);
+  --border: oklch(0.92 0.006 247);
+  --input: oklch(0.92 0.006 247);
+  --ring: #106EBE;
+  /* Semantic: Balanced — mint-inspired */
+  --balanced: #0FFCBE;
+  --balanced-muted: oklch(0.95 0.06 165);
+  /* Semantic: Cram — blue accent */
+  --cram: #106EBE;
+  --cram-muted: oklch(0.94 0.05 220);
+  /* Success, warning */
+  --success: #0FFCBE;
+  --success-muted: oklch(0.95 0.06 165);
+  --warning: oklch(0.72 0.12 75);
+  --warning-muted: oklch(0.96 0.05 75);
+  --chart-1: #106EBE;
+  --chart-2: #0FFCBE;
+  --chart-3: oklch(0.68 0.12 65);
+  --chart-4: oklch(0.55 0.12 155);
+  --chart-5: oklch(0.55 0.18 25);
+  --sidebar: oklch(0.985 0.002 247);
+  --sidebar-foreground: oklch(0.2 0.01 260);
+  --sidebar-primary: #106EBE;
+  --sidebar-primary-foreground: #ffffff;
+  --sidebar-accent: oklch(0.95 0.05 165);
+  --sidebar-accent-foreground: #0a3d2e;
+  --sidebar-border: oklch(0.92 0.006 247);
+  --sidebar-ring: #106EBE;
 }
 
 .dark {
-  --background: oklch(0.145 0 0);
-  --foreground: oklch(0.985 0 0);
-  --card: oklch(0.205 0 0);
-  --card-foreground: oklch(0.985 0 0);
-  --popover: oklch(0.205 0 0);
-  --popover-foreground: oklch(0.985 0 0);
-  --primary: oklch(0.922 0 0);
-  --primary-foreground: oklch(0.205 0 0);
-  --secondary: oklch(0.269 0 0);
-  --secondary-foreground: oklch(0.985 0 0);
-  --muted: oklch(0.269 0 0);
-  --muted-foreground: oklch(0.708 0 0);
-  --accent: oklch(0.269 0 0);
-  --accent-foreground: oklch(0.985 0 0);
-  --destructive: oklch(0.704 0.191 22.216);
-  --border: oklch(1 0 0 / 10%);
-  --input: oklch(1 0 0 / 15%);
-  --ring: oklch(0.556 0 0);
-  --chart-1: oklch(0.488 0.243 264.376);
-  --chart-2: oklch(0.696 0.17 162.48);
-  --chart-3: oklch(0.769 0.188 70.08);
-  --chart-4: oklch(0.627 0.265 303.9);
-  --chart-5: oklch(0.645 0.246 16.439);
-  --sidebar: oklch(0.205 0 0);
-  --sidebar-foreground: oklch(0.985 0 0);
-  --sidebar-primary: oklch(0.488 0.243 264.376);
-  --sidebar-primary-foreground: oklch(0.985 0 0);
-  --sidebar-accent: oklch(0.269 0 0);
-  --sidebar-accent-foreground: oklch(0.985 0 0);
-  --sidebar-border: oklch(1 0 0 / 10%);
-  --sidebar-ring: oklch(0.556 0 0);
+  --background: oklch(0.15 0.01 260);
+  --foreground: oklch(0.95 0.005 260);
+  --card: oklch(0.2 0.01 260);
+  --card-foreground: oklch(0.95 0.005 260);
+  --popover: oklch(0.2 0.01 260);
+  --popover-foreground: oklch(0.95 0.005 260);
+  --primary: #3d9ae8;
+  --primary-foreground: oklch(0.15 0.01 260);
+  --secondary: oklch(0.22 0.04 220);
+  --secondary-foreground: #0FFCBE;
+  --muted: oklch(0.25 0.01 260);
+  --muted-foreground: oklch(0.6 0.01 260);
+  --accent: oklch(0.25 0.06 165);
+  --accent-foreground: #0FFCBE;
+  --destructive: oklch(0.65 0.18 25);
+  --destructive-muted: oklch(0.25 0.05 25);
+  --border: oklch(0.3 0.01 260);
+  --input: oklch(0.28 0.01 260);
+  --ring: #3d9ae8;
+  --balanced: #0FFCBE;
+  --balanced-muted: oklch(0.22 0.05 165);
+  --cram: #3d9ae8;
+  --cram-muted: oklch(0.22 0.05 220);
+  --success: #0FFCBE;
+  --success-muted: oklch(0.22 0.05 165);
+  --warning: oklch(0.75 0.12 75);
+  --warning-muted: oklch(0.22 0.05 75);
+  --chart-1: #3d9ae8;
+  --chart-2: #0FFCBE;
+  --chart-3: oklch(0.72 0.12 65);
+  --chart-4: oklch(0.6 0.12 155);
+  --chart-5: oklch(0.65 0.18 25);
+  --sidebar: oklch(0.18 0.01 260);
+  --sidebar-foreground: oklch(0.95 0.005 260);
+  --sidebar-primary: #3d9ae8;
+  --sidebar-primary-foreground: oklch(0.15 0.01 260);
+  --sidebar-accent: oklch(0.25 0.04 165);
+  --sidebar-accent-foreground: #0FFCBE;
+  --sidebar-border: oklch(0.3 0.01 260);
+  --sidebar-ring: #3d9ae8;
 }
 
 @layer base {
+  @property --pos-x {
+    syntax: "<percentage>";
+    initial-value: 11.14%;
+    inherits: false;
+  }
+
+  @property --pos-y {
+    syntax: "<percentage>";
+    initial-value: 140%;
+    inherits: false;
+  }
+
+  @property --spread-x {
+    syntax: "<percentage>";
+    initial-value: 150%;
+    inherits: false;
+  }
+
+  @property --spread-y {
+    syntax: "<percentage>";
+    initial-value: 180.06%;
+    inherits: false;
+  }
+
+  @property --color-1 {
+    syntax: "<color>";
+    initial-value: #000;
+    inherits: false;
+  }
+
+  @property --color-2 {
+    syntax: "<color>";
+    initial-value: #08012c;
+    inherits: false;
+  }
+
+  @property --color-3 {
+    syntax: "<color>";
+    initial-value: #4e1e40;
+    inherits: false;
+  }
+
+  @property --color-4 {
+    syntax: "<color>";
+    initial-value: #70464e;
+    inherits: false;
+  }
+
+  @property --color-5 {
+    syntax: "<color>";
+    initial-value: #88394c;
+    inherits: false;
+  }
+
+  @property --border-angle {
+    syntax: "<angle>";
+    initial-value: 20deg;
+    inherits: true;
+  }
+
+  @property --border-color-1 {
+    syntax: "<color>";
+    initial-value: hsla(207, 84%, 45%, 0.3);
+    inherits: true;
+  }
+
+  @property --border-color-2 {
+    syntax: "<color>";
+    initial-value: hsla(207, 84%, 40%, 0.75);
+    inherits: true;
+  }
+
+  @property --stop-1 {
+    syntax: "<percentage>";
+    initial-value: 37.35%;
+    inherits: false;
+  }
+
+  @property --stop-2 {
+    syntax: "<percentage>";
+    initial-value: 61.36%;
+    inherits: false;
+  }
+
+  @property --stop-3 {
+    syntax: "<percentage>";
+    initial-value: 78.42%;
+    inherits: false;
+  }
+
+  @property --stop-4 {
+    syntax: "<percentage>";
+    initial-value: 89.52%;
+    inherits: false;
+  }
+
+  @property --stop-5 {
+    syntax: "<percentage>";
+    initial-value: 100%;
+    inherits: false;
+  }
+
   * {
     @apply border-border outline-ring/50;
   }
   body {
     @apply bg-background text-foreground;
+  }
+}
+
+@layer components {
+  .gradient-button {
+    @apply relative appearance-none cursor-pointer;
+    background: radial-gradient(
+      var(--spread-x) var(--spread-y) at var(--pos-x) var(--pos-y),
+      var(--color-1) var(--stop-1),
+      var(--color-2) var(--stop-2),
+      var(--color-3) var(--stop-3),
+      var(--color-4) var(--stop-4),
+      var(--color-5) var(--stop-5)
+    );
+    transition:
+      --pos-x 0.5s,
+      --pos-y 0.5s,
+      --spread-x 0.5s,
+      --spread-y 0.5s,
+      --color-1 0.5s,
+      --color-2 0.5s,
+      --color-3 0.5s,
+      --color-4 0.5s,
+      --color-5 0.5s,
+      --border-angle 0.5s,
+      --border-color-1 0.5s,
+      --border-color-2 0.5s,
+      --stop-1 0.5s,
+      --stop-2 0.5s,
+      --stop-3 0.5s,
+      --stop-4 0.5s,
+      --stop-5 0.5s;
+  }
+
+  .gradient-button::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    padding: 1px;
+    background: linear-gradient(
+      var(--border-angle),
+      var(--border-color-1),
+      var(--border-color-2)
+    );
+    mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+    mask-composite: exclude;
+    pointer-events: none;
+  }
+
+  .gradient-button:hover {
+    --pos-x: 0%;
+    --pos-y: 91.51%;
+    --spread-x: 120.24%;
+    --spread-y: 103.18%;
+    --color-1: #106EBE;
+    --color-2: #0a5290;
+    --color-3: #0FFCBE;
+    --color-4: #0a3d2e;
+    --color-5: #000;
+    --border-angle: 190deg;
+    --border-color-1: hsla(207, 84%, 90%, 0.2);
+    --border-color-2: hsla(207, 84%, 70%, 0.6);
+    --stop-1: 0%;
+    --stop-2: 8.8%;
+    --stop-3: 21.44%;
+    --stop-4: 71.34%;
+    --stop-5: 85.76%;
+  }
+
+  .gradient-button-variant {
+    --color-1: #050a12;
+    --color-2: #106EBE;
+    --color-3: #0FFCBE;
+    --color-4: #0FFCBE;
+    --border-angle: 200deg;
+    --border-color-1: hsla(163, 97%, 80%, 0.4);
+    --border-color-2: hsla(163, 97%, 70%, 0.2);
+  }
+
+  .gradient-button-variant:hover {
+    --pos-x: 0%;
+    --pos-y: 95.51%;
+    --spread-x: 110.24%;
+    --spread-y: 110.2%;
+    --color-1: #050a12;
+    --color-2: #0FFCBE;
+    --color-3: #106EBE;
+    --color-4: #0a5290;
+    --color-5: #000;
+    --stop-1: 0%;
+    --stop-2: 10%;
+    --stop-3: 35.44%;
+    --stop-4: 71.34%;
+    --stop-5: 90.76%;
+    --border-angle: 210deg;
+    --border-color-1: hsla(163, 97%, 80%, 0.3);
+    --border-color-2: hsla(163, 97%, 70%, 0.6);
   }
 }

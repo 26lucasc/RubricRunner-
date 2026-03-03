@@ -45,18 +45,18 @@ export default async function AssignmentPage({
     .single();
 
   return (
-    <div className="min-h-screen bg-slate-50 dark:bg-slate-950">
+    <div className="min-h-screen bg-background">
       <AppHeader />
 
       <main className="mx-auto max-w-4xl px-4 py-8">
         <div className="flex flex-wrap items-center justify-between gap-4">
-          <h1 className="text-2xl font-bold text-slate-900 dark:text-white">
+          <h1 className="text-2xl font-bold text-foreground">
             {assignment.title}
           </h1>
           <div className="flex items-center gap-3">
             <Link
               href={`/assignments/${id}/edit`}
-              className="text-sm font-medium text-slate-600 hover:text-slate-900 dark:text-slate-400 dark:hover:text-white"
+              className="text-sm font-medium text-muted-foreground hover:text-foreground"
             >
               Edit
             </Link>
@@ -67,7 +67,7 @@ export default async function AssignmentPage({
           </div>
         </div>
         <div className="mt-1 flex items-center gap-4">
-          <p className="text-slate-600 dark:text-slate-400">
+          <p className="text-muted-foreground">
             Due{" "}
             <FormattedDueDate iso={assignment.due_at} format="short" />
           </p>
