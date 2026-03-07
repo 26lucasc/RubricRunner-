@@ -50,10 +50,13 @@ export function AssignmentForm({
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
   const [promptPdfPath, setPromptPdfPath] = useState<string | null>(null);
+  const [promptPdfName, setPromptPdfName] = useState<string | null>(null);
   const [rubricPdfPath, setRubricPdfPath] = useState<string | null>(null);
+  const [rubricPdfName, setRubricPdfName] = useState<string | null>(null);
   const [pdfLoading, setPdfLoading] = useState<"prompt" | "rubric" | null>(null);
   const promptPdfRef = useRef<HTMLInputElement>(null);
   const rubricPdfRef = useRef<HTMLInputElement>(null);
+  const tempId = useRef<string>(crypto.randomUUID());
   const router = useRouter();
   const supabase = createClient();
   const isEdit = !!assignmentId;
@@ -112,6 +115,8 @@ export function AssignmentForm({
         title: title.trim(),
         prompt_text: promptText.trim() || null,
         rubric_text: rubricText.trim() || null,
+        prompt_pdf_path: promptPdfPath || null,
+        rubric_pdf_path: rubricPdfPath || null,
         due_at: new Date(dueAt).toISOString(),
       })
       .select("id")
@@ -137,10 +142,7 @@ export function AssignmentForm({
     ? undefined
     : `${tomorrow.getFullYear()}-${String(tomorrow.getMonth() + 1).padStart(2, "0")}-${String(tomorrow.getDate()).padStart(2, "0")}T00:00`;
 
-  async function handlePdfUpload(
-    file: File,
-    target: "prompt" | "rubric"
-  ) {
+  async function handlePdfUpload(file: File, target: "prompt" | "rubric") {
     if (file.type !== "application/pdf") {
       setError("Please upload a PDF file.");
       return;
@@ -148,45 +150,41 @@ export function AssignmentForm({
     setError(null);
     setPdfLoading(target);
     try {
-      const formData = new FormData();
-      formData.append("file", file);
-      formData.append("type", target);
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) throw new Error("Not authenticated");
 
-      const res = await fetch("/api/pdf/extract", {
-        method: "POST",
-        body: formData,
-      });
+      const path = `${user.id}/${tempId.current}/${target}.pdf`;
+      const { error: uploadError } = await supabase.storage
+        .from("assignment-pdfs")
+        .upload(path, file, { upsert: true });
 
-      const data = await res.json().catch(() => ({}));
+      if (uploadError) throw uploadError;
 
-      if (!res.ok) {
-        throw new Error(data.error ?? "Failed to extract text from PDF");
-      }
-
-      const extractedText = data.text ?? "";
       if (target === "prompt") {
-        setPromptPdfPath(file.name);
-        setPromptText(extractedText);
+        setPromptPdfPath(path);
+        setPromptPdfName(file.name);
       } else {
-        setRubricPdfPath(file.name);
-        setRubricText(extractedText);
+        setRubricPdfPath(path);
+        setRubricPdfName(file.name);
       }
     } catch (err) {
-      setError(
-        err instanceof Error ? err.message : "Failed to extract text from PDF."
-      );
+      setError(err instanceof Error ? err.message : "Failed to upload PDF.");
     } finally {
       setPdfLoading(null);
     }
   }
 
-  function clearPdf(target: "prompt" | "rubric") {
+  async function clearPdf(target: "prompt" | "rubric") {
+    const path = target === "prompt" ? promptPdfPath : rubricPdfPath;
+    if (path) {
+      await supabase.storage.from("assignment-pdfs").remove([path]);
+    }
     if (target === "prompt") {
       setPromptPdfPath(null);
-      setPromptText("");
+      setPromptPdfName(null);
     } else {
       setRubricPdfPath(null);
-      setRubricText("");
+      setRubricPdfName(null);
     }
   }
 
@@ -224,52 +222,56 @@ export function AssignmentForm({
           >
             Assignment prompt
           </label>
-          {!isEdit && (
-          <div>
-            <input
-              ref={promptPdfRef}
-              type="file"
-              accept=".pdf,application/pdf"
-              className="hidden"
-              onChange={(e) => {
-                const file = e.target.files?.[0];
-                if (file) handlePdfUpload(file, "prompt");
-                e.target.value = "";
-              }}
-            />
-            <Button
-              type="button"
-              variant="outline"
-              size="sm"
-              onClick={() => promptPdfRef.current?.click()}
-              disabled={pdfLoading !== null}
-            >
-              {pdfLoading === "prompt" ? "Uploading and extracting..." : "Upload PDF"}
-            </Button>
-          </div>
+          {!isEdit && !promptPdfPath && (
+            <div>
+              <input
+                ref={promptPdfRef}
+                type="file"
+                accept=".pdf,application/pdf"
+                className="hidden"
+                onChange={(e) => {
+                  const file = e.target.files?.[0];
+                  if (file) handlePdfUpload(file, "prompt");
+                  e.target.value = "";
+                }}
+              />
+              <Button
+                type="button"
+                variant="outline"
+                size="sm"
+                onClick={() => promptPdfRef.current?.click()}
+                disabled={pdfLoading !== null}
+              >
+                {pdfLoading === "prompt" ? "Uploading..." : "Upload PDF"}
+              </Button>
+            </div>
           )}
         </div>
-        {promptPdfPath && !isEdit && (
-          <p className="mt-1 text-sm text-green-600 dark:text-green-400">
-            PDF uploaded and text extracted.{" "}
+        {promptPdfPath && !isEdit ? (
+          <div className="mt-2 flex items-center gap-2 rounded-lg border border-green-200 bg-green-50 px-3 py-2 dark:border-green-800 dark:bg-green-950">
+            <svg className="h-4 w-4 text-green-600 dark:text-green-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+            </svg>
+            <span className="text-sm text-green-700 dark:text-green-300 flex-1 truncate">{promptPdfName}</span>
             <button
               type="button"
               onClick={() => clearPdf("prompt")}
-              className="text-primary hover:underline"
+              className="text-xs text-muted-foreground hover:text-foreground"
             >
               Remove
             </button>
-          </p>
+          </div>
+        ) : (
+          <textarea
+            id="prompt"
+            value={promptText}
+            onChange={(e) => setPromptText(e.target.value)}
+            required={isEdit}
+            rows={6}
+            placeholder="Paste the assignment prompt or upload a PDF..."
+            className="mt-1 block w-full rounded-lg border border-input px-3 py-2 bg-background text-foreground placeholder-muted-foreground focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary disabled:opacity-60"
+          />
         )}
-        <textarea
-          id="prompt"
-          value={promptText}
-          onChange={(e) => setPromptText(e.target.value)}
-          required={isEdit}
-          rows={6}
-          placeholder="Paste the assignment prompt or upload a PDF to extract text..."
-          className="mt-1 block w-full rounded-lg border border-input px-3 py-2 bg-background text-foreground placeholder-muted-foreground focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary disabled:opacity-60 "
-        />
       </div>
 
       <div>
@@ -280,52 +282,56 @@ export function AssignmentForm({
           >
             Rubric
           </label>
-          {!isEdit && (
-          <div>
-            <input
-              ref={rubricPdfRef}
-              type="file"
-              accept=".pdf,application/pdf"
-              className="hidden"
-              onChange={(e) => {
-                const file = e.target.files?.[0];
-                if (file) handlePdfUpload(file, "rubric");
-                e.target.value = "";
-              }}
-            />
-            <Button
-              type="button"
-              variant="outline"
-              size="sm"
-              onClick={() => rubricPdfRef.current?.click()}
-              disabled={pdfLoading !== null}
-            >
-              {pdfLoading === "rubric" ? "Uploading and extracting..." : "Upload PDF"}
-            </Button>
-          </div>
+          {!isEdit && !rubricPdfPath && (
+            <div>
+              <input
+                ref={rubricPdfRef}
+                type="file"
+                accept=".pdf,application/pdf"
+                className="hidden"
+                onChange={(e) => {
+                  const file = e.target.files?.[0];
+                  if (file) handlePdfUpload(file, "rubric");
+                  e.target.value = "";
+                }}
+              />
+              <Button
+                type="button"
+                variant="outline"
+                size="sm"
+                onClick={() => rubricPdfRef.current?.click()}
+                disabled={pdfLoading !== null}
+              >
+                {pdfLoading === "rubric" ? "Uploading..." : "Upload PDF"}
+              </Button>
+            </div>
           )}
         </div>
-        {rubricPdfPath && !isEdit && (
-          <p className="mt-1 text-sm text-green-600 dark:text-green-400">
-            PDF uploaded and text extracted.{" "}
+        {rubricPdfPath && !isEdit ? (
+          <div className="mt-2 flex items-center gap-2 rounded-lg border border-green-200 bg-green-50 px-3 py-2 dark:border-green-800 dark:bg-green-950">
+            <svg className="h-4 w-4 text-green-600 dark:text-green-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+            </svg>
+            <span className="text-sm text-green-700 dark:text-green-300 flex-1 truncate">{rubricPdfName}</span>
             <button
               type="button"
               onClick={() => clearPdf("rubric")}
-              className="text-primary hover:underline"
+              className="text-xs text-muted-foreground hover:text-foreground"
             >
               Remove
             </button>
-          </p>
+          </div>
+        ) : (
+          <textarea
+            id="rubric"
+            value={rubricText}
+            onChange={(e) => setRubricText(e.target.value)}
+            required={isEdit}
+            rows={8}
+            placeholder="Paste the rubric or upload a PDF. Include categories, point values, and requirements..."
+            className="mt-1 block w-full rounded-lg border border-input px-3 py-2 bg-background text-foreground placeholder-muted-foreground focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary disabled:opacity-60"
+          />
         )}
-        <textarea
-          id="rubric"
-          value={rubricText}
-          onChange={(e) => setRubricText(e.target.value)}
-          required={isEdit}
-          rows={8}
-          placeholder="Paste the rubric or upload a PDF to extract text. Include categories, point values, and requirements..."
-          className="mt-1 block w-full rounded-lg border border-input px-3 py-2 bg-background text-foreground placeholder-muted-foreground focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary disabled:opacity-60 "
-        />
       </div>
 
       <div>

@@ -3,13 +3,33 @@ import type { ChecklistItem, ExtractedRubric, GeneratedOutput } from "./types";
 import { extractRubric } from "./extractor";
 import { generatePlan } from "./plan-generator";
 import { scanRisks } from "./risk-scanner";
+import { extractTextFromPdfViaLlm } from "./pdf-extractor";
+import type { SupabaseClient } from "@supabase/supabase-js";
+
+async function extractTextFromStoragePdf(
+  supabase: SupabaseClient,
+  path: string,
+  type: "prompt" | "rubric"
+): Promise<string> {
+  const { data, error } = await supabase.storage
+    .from("assignment-pdfs")
+    .download(path);
+
+  if (error || !data) {
+    throw new Error(`Could not download PDF: ${error?.message ?? "unknown error"}`);
+  }
+
+  const buffer = Buffer.from(await data.arrayBuffer());
+  const base64 = buffer.toString("base64");
+  return extractTextFromPdfViaLlm(base64, type);
+}
 
 export async function generateForAssignment(assignmentId: string): Promise<GeneratedOutput> {
   const supabase = await createClient();
 
   const { data: assignment, error: assignError } = await supabase
     .from("assignments")
-    .select("prompt_text, rubric_text, due_at")
+    .select("prompt_text, rubric_text, prompt_pdf_path, rubric_pdf_path, due_at")
     .eq("id", assignmentId)
     .single();
 
@@ -17,8 +37,16 @@ export async function generateForAssignment(assignmentId: string): Promise<Gener
     throw new Error("Assignment not found");
   }
 
-  const promptText = assignment.prompt_text ?? "";
-  const rubricText = assignment.rubric_text ?? "";
+  let promptText = assignment.prompt_text ?? "";
+  let rubricText = assignment.rubric_text ?? "";
+
+  if (!promptText && assignment.prompt_pdf_path) {
+    promptText = await extractTextFromStoragePdf(supabase, assignment.prompt_pdf_path, "prompt");
+  }
+
+  if (!rubricText && assignment.rubric_pdf_path) {
+    rubricText = await extractTextFromStoragePdf(supabase, assignment.rubric_pdf_path, "rubric");
+  }
 
   if (!promptText || !rubricText) {
     throw new Error("Assignment must have prompt and rubric");
